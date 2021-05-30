@@ -1,48 +1,107 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
+        integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
 
     <title>Biblioteca</title>
 </head>
+
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
-          <a class="navbar-brand" href="{% url 'home' %}">Biblioteca</a>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse navbar-shadow" id="navbarNavAltMarkup">
-            <div class="navbar-nav">
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarScrollingDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    Filtrar categoría
-                </a>
-                <ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
-                    <li><a class="dropdown-item {% if request.path == '/' %} active {% endif %}" aria-current="page" href="{% url 'home' %}">Todos</a></li>
-                    {% for categoria in categorias %}
-                        <li><a class="dropdown-item {% if categoria.nombre in request.path %} active {% endif %}" aria-current="page" href="{% url 'home' categoria.nombre %}">{{ categoria.nombre }}</a></li>
-                    {% endfor %}</li>
-                </ul>
-            </li>
-            <span class="d-flex">
-                {% if user.is_authenticated %}
-                    <span class="nav-link text-primary">Hola {{ user.username }} </span>
-                    <a class="btn btn-outline-danger" href="#">Cerrar Sesión</a>
-                {% else %}
-                    <span class="nav-link">Hola Invitado </span>
-                    <a class="btn btn-outline-success" href="#">Iniciar Sesión</a>
-                {% endif %}
-            </span>
+            <a class="navbar-brand" href="{% url 'home' %}">Biblioteca</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
+                aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse navbar-shadow" id="navbarNavAltMarkup">
+                <div class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarScrollingDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            Filtrar categoría
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
+                            <li><a class="dropdown-item {% if request.path == '/' %} active {% endif %}"
+                                    aria-current="page" href="{% url 'home' %}">Todos</a></li>
+                            {% for categoria in categorias %}
+                            <li><a class="dropdown-item {% if categoria.nombre in request.path %} active {% endif %}"
+                                    aria-current="page"
+                                    href="{% url 'home' categoria.nombre %}">{{ categoria.nombre }}</a></li>
+                            {% endfor %}
+                    </li>
+                    </ul>
+                    </li>
+                    <span class="d-flex">
+                        {% if user.is_authenticated %}
+                        <span class="nav-link text-primary">Hola {{ user.username }} </span>
+                        <a class="btn btn-outline-danger" href="{% url 'logout' %}">Cerrar Sesión</a>
+                        {% else %}
+                        <span class="nav-link">Hola Invitado </span>
+                        <a class="btn btn-outline-success" href="{% url 'login' %}">Iniciar Sesión</a>
+                        {% endif %}
+                    </span>
+                </div>
             </div>
-          </div>
         </div>
-      </nav>
+    </nav>
     {% block cuerpo %}{% endblock %}
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
+
+    <div class="modal fade" id="editar" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 id="tituloEditar" class="modal-title" id="exampleModalLabel">Modal title</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %} <!-- le pasamos el token -->
+                        {{form.as_p}}
+                        
+                        <input id="idForm" type="hidden" name="id" />
+                        <input type="hidden" name="edicion" value="1" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-warning">Guardar</button>
+                    
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="borrar" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">¿Seguro que deseas eliminar el siguiente libro?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="parrafoEliminar"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <a id="linkAModal" href="" type="button" class="btn btn-danger">Eliminar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous">
+    </script>
+    <script type="text/javascript" src="{% static 'js/modals.js' %}" ></script>
 </body>
+
 </html>

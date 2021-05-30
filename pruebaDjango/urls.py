@@ -16,12 +16,17 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.conf import settings
-from libros import views
+from libros import views as libros
+from core import views as core
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.home, name='home'),
-    path('<categoria>', views.home, name='home')
+    path('', libros.home, name='home'),
+    path('<categoria>', libros.home, name='home'),
+    path('borrar/<int:libro>', libros.borrar_libro, name='borrar'),
+    path('<int:id>', libros.home, name='home'),
+    path('login/', core.acceder, name='login'),
+    path('logout/', core.salir, name='logout')
 ]
 
 if settings.DEBUG:

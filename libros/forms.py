@@ -10,10 +10,10 @@ class LibroForm(forms.ModelForm):
         fields = ['portada', 'titulo', 'autor', 'categorias']
 
         widgets = {
-            'portada': forms.FileInput(attrs={'class':'form-control', 'placeholder': 'Portada'}),
-            'titulo': forms.TextInput(attrs={'class':'form-control', 'placeholder':'Título del libro'}),
-            'autor': forms.Select(attrs={'class':'form-control'}),
-            'categorias': forms.SelectMultiple(attrs={'class':'form-control'})
+            'portada': forms.FileInput(attrs={'class':'portadaForm form-control', 'placeholder': 'Portada'}),
+            'titulo': forms.TextInput(attrs={'class':'tituloForm form-control', 'placeholder':'Título del libro'}),
+            'autor': forms.Select(attrs={'class':'autorForm form-control'}),
+            'categorias': forms.SelectMultiple(attrs={'class':'categoriasForm form-control'})
         }
 
         labels = {

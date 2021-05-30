@@ -17,8 +17,10 @@
             {% if user.is_authenticated %}
                 <div class="col">
                     <div class="card shadow-sm" style="width: 18rem;">
+                        <br>
+                        <h5 class="text-center">Nuevo Libro</h5>
                         <div class="card-body">
-                            <form method="POST">
+                            <form method="POST" enctype="multipart/form-data">
                                 {% csrf_token %} <!-- le pasamos el token -->
                                 {{form.as_p}} <!-- pasamos el formulario y lo formateamos en parrafos, si usamos as_table se formateará en tabla -->
                                 <button class="btn btn-large  btn-primary" type="submit">Registrar Libro</button><!-- no olvides el botón submit -->
@@ -41,16 +43,26 @@
                         <div class="card-body">
                         <h5 class="card-title">{{ libro.titulo }}</h5>
                         <small>{{ libro.autor }}</small>
+                        <ul>
+                            {% for categoria in libro.categorias.all %}
+                                <li>{{ categoria }}</li>
+                            {% endfor %}
+                        </ul>
                         {% if user.is_authenticated %}
                         <br><br>
                             <div class="row">
                                 <div class="col">
-                                    <a href="#" class="btn btn-warning">
+                                    <button type="button" class="md-btn btn btn-warning" data-bs-toggle="modal" data-bs-target="#editar" 
+                                    data-id="{{ libro.id }}" 
+                                    data-titulo="{{ libro.titulo }}" 
+                                    data-autor="{{libro.autor}}" 
+                                    data-categorias="{{ libro.categorias.all|join:',' }}">
+                                    
                                         <i class="fas fa-edit"></i>
-                                    </a>
-                                    <a href="#" class="btn btn-danger">
+                                    </button>
+                                    <button type="button" class="md-btn btn btn-danger" data-bs-toggle="modal" data-bs-target="#borrar" data-id="{{ libro.id }}" data-titulo="{{ libro.titulo }}">
                                         <i class="fas fa-trash-alt"></i>
-                                    </a>
+                                    </button>
                                 </div>
                             </div>
                         {% endif %}
