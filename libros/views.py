@@ -16,27 +16,29 @@ def home(request, categoria = None):
     form = LibroForm()
 
     if request.method == "POST":
-        
-        if request.POST["edicion"] == "1":
-            libro = Libro.objects.get(id=request.POST["id"])
-            form = LibroForm(request.POST, request.FILES, instance=libro)
+        try:
+            if request.POST["edicion"] == "1":
+                libro = Libro.objects.get(id=request.POST["id"])
+                form = LibroForm(request.POST, request.FILES, instance=libro)
 
-            if form.is_valid():
-                # TODO: Solucionar el motivo por el que pese a que llegan varios solo se puede coger uno para guardar..
-                cat = request.POST["categorias"]
-                libro.save()
-                libro.categorias.set(cat)
-                return redirect('home')
-            else:
-                form = LibroForm()
-        """except:
+                if form.is_valid():
+                    # recibir y convertir en diccionario el post:
+                    r = dict(request.POST)
+                    # Ahora si recupera múltiples selecciones en lugar de una:
+                    cat = r["categorias"]
+                    libro.save()
+                    libro.categorias.set(cat)
+                    return redirect('home')
+                else:
+                    form = LibroForm()
+        except:
             form = LibroForm(request.POST, request.FILES)
 
             if form.is_valid():
                 registro = form.save()
                 return redirect('home')
             else:
-                form = LibroForm()"""
+                form = LibroForm()
 
 
 
