@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block cuerpo %}
+    <main class="container">
+        <br>
+        <h2 class="text-center">
+            {% if categoria != None %}
+                Libros de {{ categoria }}
+            {% else %}
+                Todos los Libros
+            {% endif %}
+        </h2>
+        <br>
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+            
+            {% if user.is_authenticated %}
+                <div class="col">
+                    <div class="card shadow-sm" style="width: 18rem;">
+                        <div class="card-body">
+                            <form method="POST">
+                                {% csrf_token %} <!-- le pasamos el token -->
+                                {{form.as_p}} <!-- pasamos el formulario y lo formateamos en parrafos, si usamos as_table se formateará en tabla -->
+                                <button class="btn btn-large  btn-primary" type="submit">Registrar Libro</button><!-- no olvides el botón submit -->
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+            
+            {% for libro in libros %}
+                <div class="col">
+                    <div class="card shadow-sm" style="width: 18rem;">
+                        <img src="
+                            {% if libro.portada.url != None %}
+                                {{ libro.portada.url }}
+                            {% else %}
+                                {% static 'img/sin-portada.jpg' %}
+                            {% endif %}
+                            " class="card-img-top" alt="{{ libro.titulo }}" height="450px">
+                        <div class="card-body">
+                        <h5 class="card-title">{{ libro.titulo }}</h5>
+                        <small>{{ libro.autor }}</small>
+                        {% if user.is_authenticated %}
+                        <br><br>
+                            <div class="row">
+                                <div class="col">
+                                    <a href="#" class="btn btn-warning">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="#" class="btn btn-danger">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        
+        <br><br>
+    </main>
+{% endblock %}
